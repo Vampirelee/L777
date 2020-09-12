@@ -13,4 +13,10 @@ export default class UtilController extends Controller {
     const data = ctx.helper.sendEmailCode(info.email);
     ctx.success(data);
   }
+  public async phoneCode() {
+    const { ctx } = this;
+    const info = ctx.query;
+    const data = ctx.helper.sendSmsCode(info.phone);
+    ctx.success(data);
+  }
 }

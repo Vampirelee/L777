@@ -46,7 +46,7 @@ export default class UsersController extends Controller {
       case RegisterTypeEnum.PhoneUserRule:
         ctx.validate(phoneUserRule, registerInfo);
         // 手机验证码是否正确
-
+        ctx.helper.verifySmsCode(clientCode);
         break;
 
       default:

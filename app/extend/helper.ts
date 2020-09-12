@@ -1,5 +1,6 @@
 import imageCode from '../utils/imageCode';
 import emailCode from '../utils/emailCode';
+import phoneCode from '../utils/phoneCode';
 module.exports = {
   createImageCode() {
     // this.ctx => context 对象
@@ -16,4 +17,12 @@ module.exports = {
   verifyEmailCode(clientCode) {
     emailCode.verifyEmailCode(this.ctx, clientCode);
   },
+
+  async sendSmsCode(phone) {
+    return await phoneCode.sendSms(this.ctx, phone);
+  },
+  verifySmsCode(clientCode) {
+    phoneCode.verifySmsCode(this.ctx, clientCode);
+  },
+
 };
