@@ -3,38 +3,38 @@
  */
 import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
 @Table({
-    modelName: 'user'
+  modelName: 'user',
 })
 export class User extends Model<User> {
 
-    @PrimaryKey
-    @AutoIncrement
-    @Column({
-        type: DataType.INTEGER,
-        comment: '用户ID',
-    })
-    id: number;
+  @PrimaryKey
+  @AutoIncrement
+  @Column({
+    type: DataType.INTEGER,
+    comment: '用户ID',
+  })
+  id: number;
 
-    @Column({
-        type: DataType.STRING,
-        comment: '用户姓名',
-    })
-    name: string;
+  @Column({
+    type: DataType.STRING,
+    comment: '用户姓名',
+  })
+  name: string;
 
-    @Column({
-        type: DataType.INTEGER,
-        comment: '用户年龄'
-    })
-    age: number;
+  @Column({
+    type: DataType.INTEGER,
+    comment: '用户年龄',
+  })
+  age: number;
 
-    @Column({
-        field: 'created_at'
-    })
-    createdAt: Date;
+  @Column({
+    field: 'created_at',
+  })
+  createdAt: Date;
 
-    @Column({
-        field: 'updated_at'
-    })
-    updatedAt: Date;
+  @Column({
+    field: 'updated_at',
+  })
+  updatedAt: Date;
 }
 export default () => User;
