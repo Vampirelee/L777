@@ -28,21 +28,27 @@ export default class UsersController extends Controller {
     const registerType = registerInfo.registerType;
     const clientCode = registerInfo.captcha;
     switch (registerType) {
+      // 用户名注册
       case RegisterTypeEnum.NormalUserRule:
         ctx.validate(normalUserRules, registerInfo);
-        // 验证码是否正确
+        // 图形验证码是否正确
         ctx.helper.verifyImageCode(clientCode);
         break;
+
+        // 邮箱注册
       case RegisterTypeEnum.EmailUserRule:
         ctx.validate(emailUserRule, registerInfo);
-        // 验证码是否正确
-        ctx.helper.verifyImageCode(clientCode);
+        // 邮箱验证码是否正确
+        ctx.helper.verifyEmailCode(clientCode);
         break;
+
+        // 手机注册
       case RegisterTypeEnum.PhoneUserRule:
         ctx.validate(phoneUserRule, registerInfo);
-        // 验证码是否正确
-        ctx.helper.verifyImageCode(clientCode);
+        // 手机验证码是否正确
+
         break;
+
       default:
         throw new Error('当前注册类型不存在！');
     }

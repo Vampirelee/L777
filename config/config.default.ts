@@ -8,22 +8,6 @@ export default (appInfo: EggAppInfo) => {
   config.keys = appInfo.name + '_LEEDAOHUAN.*?';
 
   // add your egg config in here
-  config.middleware = [];
-  config.security = {
-    csrf: {
-        enable: false
-    },
-  };
-  config.redis = {
-    clients: {
-      session: {
-          host: '127.0.0.1',
-          port: 6379,
-          password: '',
-          db: 0,
-      }
-    },
-  };
 
   // add your special config in here
   const bizConfig = {

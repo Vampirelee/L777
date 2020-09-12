@@ -12,4 +12,8 @@ module.exports = {
   async sendEmailCode(to:string) {
     return await emailCode.sendEmailInfo(this.ctx, to);
   },
+
+  verifyEmailCode(clientCode) {
+    emailCode.verifyEmailCode(this.ctx, clientCode);
+  },
 };

@@ -3,14 +3,14 @@ export default {
   /**
      * 创建邮箱发送器
      */
-  createEmailTransporter() {
+  createEmailTransporter(ctx) {
     return nodemailer.createTransport({
-      host: 'smtp.qq.com',
-      port: 465,
-      secure: true, // true for 465, false for other ports
+      host: ctx.app.config.smtp.host,
+      port: ctx.app.config.smtp.port,
+      secure: ctx.app.config.smtp.port === 465, // true for 465, false for other ports
       auth: {
-        user: 'lidaohuan@qq.com', // generated ethereal user
-        pass: 'afrrdzkvxcokcaef', // generated ethereal password
+        user: ctx.app.config.smtp.user, // generated ethereal user
+        pass: ctx.app.config.smtp.pass, // generated ethereal password
       },
     });
   },
@@ -42,7 +42,7 @@ export default {
      * @param to 收件人邮箱
      */
   async sendEmailInfo(ctx, to:string) {
-    const transporter = this.createEmailTransporter();
+    const transporter = this.createEmailTransporter(ctx);
     const info = this.createEmailInfo(ctx, to);
 
     return new Promise((resolve, reject) => {
@@ -51,5 +51,27 @@ export default {
       });
     });
 
+  },
+
+  verifyEmailCode(ctx, emailCode) {
+    const serviceEmailCode = ctx.session.emailCode;
+    let serviceCode,
+      serviceExpire;
+    try {
+      serviceCode = serviceEmailCode.code;
+      serviceExpire = serviceEmailCode.expire;
+    } catch (e) {
+      ctx.session.emailCode = null;
+      throw new Error('邮箱验证码已过期');
+    }
+
+    if (Date.now() > serviceExpire) {
+      ctx.session.eamilCode = null;
+      throw new Error('邮箱验证码已过期');
+    } else if (emailCode !== serviceCode) {
+      ctx.session.eamilCode = null;
+      throw new Error('邮箱验证码不正确');
+    }
+    ctx.session.emailCode = null;
   },
 };
