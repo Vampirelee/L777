@@ -27,6 +27,7 @@ export default () => {
     password: 'root',
     port: 3306,
     database: 'it666',
+    timezone: '+08:00',
   };
   config.sessionRedis = {
     name: 'session',

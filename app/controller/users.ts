@@ -12,7 +12,8 @@ export default class UsersController extends Controller {
     const { ctx } = this;
     try {
       this.validateUserInfo();
-      ctx.success({});
+      const res = await ctx.service.users.createUser(ctx.request.body);
+      ctx.success(res);
     } catch (e) {
       if (e.errors) {
         ctx.error(400, e.errors);

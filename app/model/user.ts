@@ -1,7 +1,7 @@
 /**
  * @desc 用户表
  */
-import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table, CreatedAt, UpdatedAt } from 'sequelize-typescript';
 @Table({
   modelName: 'user',
 })
@@ -19,22 +19,30 @@ export class User extends Model<User> {
     type: DataType.STRING,
     comment: '用户姓名',
   })
-  name: string;
+  username: string;
 
   @Column({
-    type: DataType.INTEGER,
-    comment: '用户年龄',
+    type: DataType.STRING,
+    comment: '用户邮箱',
   })
-  age: number;
+  email: string;
 
   @Column({
-    field: 'created_at',
+    type: DataType.STRING,
+    comment: '用户手机',
   })
+  phone: string;
+
+  @Column({
+    type: DataType.STRING,
+    comment: '用户密码',
+  })
+  password: string;
+
+  @CreatedAt
   createdAt: Date;
 
-  @Column({
-    field: 'updated_at',
-  })
+  @UpdatedAt
   updatedAt: Date;
 }
 export default () => User;

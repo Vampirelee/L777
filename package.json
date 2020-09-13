@@ -20,7 +20,7 @@
     "autod": "autod",
     "lint": "eslint . --ext .ts",
     "clean": "ets clean",
-    "sequelize-cli-ts": "node -r ts-node/register ./node_modules/sequelize-cli/lib/sequelize"
+    "sequelize-cli-ts": "cross-env NODE_ENV=development node -r ts-node/register ./node_modules/sequelize-cli/lib/sequelize"
   },
   "dependencies": {
     "@alicloud/pop-core": "^1.7.9",
@@ -42,6 +42,7 @@
     "@types/supertest": "^2.0.0",
     "autod": "^3.0.1",
     "autod-egg": "^1.1.0",
+    "cross-env": "^7.0.2",
     "egg-bin": "^4.11.0",
     "egg-ci": "^1.8.0",
     "egg-mock": "^3.16.0",
