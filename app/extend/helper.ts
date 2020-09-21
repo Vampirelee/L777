@@ -1,6 +1,7 @@
 import imageCode from '../utils/imageCode';
 import emailCode from '../utils/emailCode';
 import phoneCode from '../utils/phoneCode';
+
 module.exports = {
   createImageCode() {
     // this.ctx => context 对象

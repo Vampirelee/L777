@@ -16,6 +16,8 @@ export default class User extends Service {
         username,
         password,
       });
+
+      delete data.password;
       return data;
     } else if (email) {
       const user = await this.findUserByEmail(email);
@@ -24,6 +26,7 @@ export default class User extends Service {
         email,
         password,
       });
+      delete data.password;
       return data;
     } else if (phone) {
       const user = await this.findUserByPhone(phone);
@@ -32,6 +35,7 @@ export default class User extends Service {
         phone,
         password,
       });
+      delete data.password;
       return data;
     }
   }

@@ -5,8 +5,8 @@ export default {
     const captcha = svgCaptcha.create({
       size: 4, // size of random string
       ignoreChars: '0o1i', // filter out some characters like 0o1i
-      width: 100,
-      height: 62,
+      width: 80,
+      height: 40,
       fontSize: 50,
       noise: 2, // number of noise lines
       color: true, // characters will have distinct colors instead of grey, true if background option is set
@@ -27,14 +27,11 @@ export default {
       serviceCode = serviceCaptcha.code;
       serviceExpire = serviceCaptcha.expire;
     } catch (e) {
-      ctx.session.captcha = null;
       throw new Error('验证码已过期');
     }
     if (Date.now() > serviceExpire) {
-      ctx.session.captcha = null;
       throw new Error('验证码已过期');
     } else if (clientCode !== serviceCode) {
-      ctx.session.captcha = null;
       throw new Error('验证码不正确');
     }
     ctx.session.captcha = null;

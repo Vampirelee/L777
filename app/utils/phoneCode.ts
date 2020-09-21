@@ -17,7 +17,7 @@ export default {
     // 存储验证码到session中
     ctx.session.smsCode = {
       code,
-      expire: Date.now() + 60 * 1000,
+      expire: Date.now() + 300 * 1000,
     };
 
     return {
@@ -47,10 +47,10 @@ export default {
       serviceCode = serviceSmsCode.code;
       serviceExpire = serviceSmsCode.expire;
     } catch (e) {
-      throw new Error('验证码已过期');
+      throw new Error('验证码已过期1');
     }
     if (Date.now() > serviceExpire) {
-      throw new Error('验证码已过期');
+      throw new Error('验证码已过期2');
     } else if (clientCode !== serviceCode) {
       throw new Error('验证码不正确');
     }

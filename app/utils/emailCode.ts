@@ -46,9 +46,14 @@ export default {
     const info = this.createEmailInfo(ctx, to);
 
     return new Promise((resolve, reject) => {
-      transporter.sendMail(info, (err, data) => {
-        err ? reject(err) : resolve(data);
-      });
+      try {
+        transporter.sendMail(info, (err, data) => {
+          err ? reject(err) : resolve(data);
+        });
+      } catch (e) {
+        reject(e);
+      }
+
     });
 
   },
