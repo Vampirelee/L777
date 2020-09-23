@@ -12,4 +12,6 @@ export default (app: Application) => {
   router.get('/phoneCode', controller.util.phoneCode);
   // 用户注册
   router.post('/register', controller.users.createUser);
+  // 用户登录
+  router.post('/login', controller.users.login);
 };

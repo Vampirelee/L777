@@ -5,6 +5,7 @@ module.exports = {
     this.body = {
       code: status,
       data,
+      isOk: true,
       msg,
     };
   },
@@ -12,6 +13,7 @@ module.exports = {
     this.status = status;
     this.body = {
       code: status,
+      isOk: false,
       msg,
     };
   },
