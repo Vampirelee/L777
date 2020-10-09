@@ -2,12 +2,32 @@ import { Controller } from 'egg';
 import normalUserRules from '../validator/normalUserRule';
 import emailUserRule from '../validator/emailUserRule';
 import phoneUserRule from '../validator/phoneUserRule';
+import jwt = require('jsonwebtoken');
 const enum typeEnum {
   NormalUserRule = 'normal',
   EmailUserRule = 'email',
   PhoneUserRule = 'phone'
 }
 export default class UsersController extends Controller {
+  public async users() {
+    const { ctx } = this;
+    try {
+      const res = await ctx.service.users.findAll();
+      ctx.success(res);
+    } catch (e) {
+      ctx.error(400, e);
+    }
+  }
+  public async isLogin() {
+    const { ctx } = this;
+    const token = ctx.get('Authorization');
+    try {
+      const decode = jwt.verify(token, this.config.keys);
+      ctx.success(decode);
+    } catch (err) {
+      ctx.error(400, err);
+    }
+  }
   public async login() {
     const { ctx } = this;
     try {
@@ -17,7 +37,12 @@ export default class UsersController extends Controller {
       ctx.helper.verifyImageCode(clientCode);
 
       const data = await this.validateUserLogin();
+      // 存储用户会话状态(服务端)
+      // ctx.session.user = data;
+      // jwt存储会话状态
       delete data.password;
+      const token = jwt.sign(data, this.config.keys, { expiresIn: '2 days' });
+      data.token = token;
       ctx.success(data);
 
     } catch (e) {

@@ -71,4 +71,10 @@ export default class User extends Service {
     const res = await ctx.model.User.findOne({ where: options });
     return res;
   }
+
+  public async findAll() {
+    const { ctx } = this;
+    const res = await ctx.model.User.findAll();
+    return res;
+  }
 }

@@ -14,4 +14,14 @@ export default (app: Application) => {
   router.post('/register', controller.users.createUser);
   // 用户登录
   router.post('/login', controller.users.login);
+
+  // 用户是否登录
+  router.get('/islogin', controller.users.isLogin);
+
+  // 获取用户
+  router.get('/users', controller.users.users);
+
+
+  // github第三方登录
+  router.get('/github', controller.github.loginView);
 };
