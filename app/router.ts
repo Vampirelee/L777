@@ -23,5 +23,6 @@ export default (app: Application) => {
 
 
   // github第三方登录
-  router.get('/github', controller.github.loginView);
+  router.get('/github', controller.github.getLoginView);
+  router.get('/github/callback', controller.github.getAccessToken);
 };

@@ -19,8 +19,23 @@ export default (appInfo: EggAppInfo) => {
     allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
     credentials: true,
   };
-
-  // add your egg config in here
+  // 发送邮件相关配置
+  config.smtp = {
+    host: 'smtp.qq.com',
+    port: 465,
+    user: 'lidaohuan@qq.com', // generated ethereal user
+    pass: 'afrrdzkvxcokcaef', // generated ethereal password
+  };
+  // 短信相关配置
+  config.sms = {
+    accessKeyId: 'LTAI4G7WyYo17jrPcSAL8Uzi',
+    accessKeySecret: 'j83juLybJt23lVShvUCdBCeAEVHHYI',
+  };
+  // 配置中间件
+  config.middleware = [ 'auths' ];
+  config.auths = {
+    authUrls: [ '/users' ],
+  };
 
   // add your special config in here
   const bizConfig = {

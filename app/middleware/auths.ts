@@ -4,7 +4,7 @@ module.exports = (options, app) => {
   return async function(ctx, next) {
     const urls = options.authUrls;
     if (urls.includes(ctx.url)) {
-      const token = ctx.get('Authorization');
+      const token = ctx.cookies.get('token');
       if (token) {
         try {
           jwt.verify(token, app.config.keys);

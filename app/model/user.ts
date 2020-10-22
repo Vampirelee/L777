@@ -1,7 +1,9 @@
 /**
  * @desc 用户表
  */
-import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table, CreatedAt, UpdatedAt } from 'sequelize-typescript';
+import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table, CreatedAt, UpdatedAt, HasMany } from 'sequelize-typescript';
+import { Oauths } from "./oauths";
+
 @Table({
   modelName: 'user',
 })
@@ -38,6 +40,9 @@ export class User extends Model<User> {
     comment: '用户密码',
   })
   password: string;
+
+  @HasMany(() => Oauths)
+  oauths: Oauths[];
 
   @CreatedAt
   createdAt: Date;

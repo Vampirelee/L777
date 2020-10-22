@@ -42,7 +42,12 @@ export default class UsersController extends Controller {
       // jwt存储会话状态
       delete data.password;
       const token = jwt.sign(data, this.config.keys, { expiresIn: '2 days' });
-      data.token = token;
+      // data.token = token;
+      ctx.cookies.set('token', token, {
+        path: '/',
+        httpOnly: false,
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 有效期7天
+      });
       ctx.success(data);
 
     } catch (e) {
