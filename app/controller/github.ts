@@ -47,9 +47,9 @@ export default class GithubController extends Controller {
     });
     const data = JSON.parse(result.data);
     data.provider = 'github';
-    await this.go2Admin(data);
+    await this.go2Admin(data, accessToken);
   }
-  private async go2Admin(data) {
+  private async go2Admin(data, accessToken) {
     const { ctx } = this;
     try {
       // 用户存在，直接登录
@@ -60,6 +60,7 @@ export default class GithubController extends Controller {
         path: '/',
         httpOnly: false,
         maxAge: 7 * 24 * 60 * 60 * 1000, // 有效期7天
+        signed: false,
       });
       ctx.redirect('http://127.0.0.1:8080/admin');
     } catch (e) {
@@ -67,15 +68,28 @@ export default class GithubController extends Controller {
       // 1.注册用户（用户名 / 密码）
       const user = {
         username: uuidv4(),
-        email: undefined,
-        phone: undefined,
         password: 'com.1234',
+        github: 1,
       };
       const result = await ctx.service.users.createUser(user);
       const dataInfo = (result as any).dataValues;
-      console.log(dataInfo);
       // 2.保存授权信息
+      const oauthInfo = {
+        access_token: accessToken,
+        provider: data.provider,
+        uid: data.id,
+        user_id: dataInfo.id,
+      };
+      await ctx.service.oauths.createOAuth(oauthInfo);
       // 3.直接登录
+      const token = jwt.sign(user, this.config.keys, { expiresIn: '2 days' });
+      ctx.cookies.set('token', token, {
+        path: '/',
+        httpOnly: false,
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 有效期7天
+        signed: false,
+      });
+      ctx.redirect('http://127.0.0.1:8080/admin');
     }
 
   }

@@ -2,17 +2,23 @@ import { Controller } from 'egg';
 import normalUserRules from '../validator/normalUserRule';
 import emailUserRule from '../validator/emailUserRule';
 import phoneUserRule from '../validator/phoneUserRule';
+import addUserRule from '../validator/addUserRule';
+import editUserRule from '../validator/editUserRule';
 import jwt = require('jsonwebtoken');
+import path = require('path');
+import fs = require('fs');
+import xlsx = require('node-xlsx');
+
 const enum typeEnum {
   NormalUserRule = 'normal',
   EmailUserRule = 'email',
   PhoneUserRule = 'phone'
 }
 export default class UsersController extends Controller {
-  public async users() {
+  public async index() {
     const { ctx } = this;
     try {
-      const res = await ctx.service.users.findAll();
+      const res = await ctx.service.users.getUserList(ctx.query);
       ctx.success(res);
     } catch (e) {
       ctx.error(400, e);
@@ -36,27 +42,148 @@ export default class UsersController extends Controller {
       const clientCode = requestData.captcha;
       ctx.helper.verifyImageCode(clientCode);
 
-      const data = await this.validateUserLogin();
+      const user = await this.validateUserLogin();
+
+      // 判断用户是否可用
+      if (!user.user_state) return ctx.error(400, '用户已注销');
       // 存储用户会话状态(服务端)
       // ctx.session.user = data;
       // jwt存储会话状态
-      delete data.password;
-      const token = jwt.sign(data, this.config.keys, { expiresIn: '2 days' });
+      delete user.password;
+      const token = jwt.sign(user, this.config.keys, { expiresIn: '2 days' });
       // data.token = token;
       ctx.cookies.set('token', token, {
         path: '/',
         httpOnly: false,
         maxAge: 7 * 24 * 60 * 60 * 1000, // 有效期7天
+        signed: false,
       });
-      ctx.success(data);
+      ctx.success(user);
 
     } catch (e) {
       if (e.errors) {
         ctx.error(400, e.errors);
       } else {
-        ctx.error(200, e.message);
+        ctx.error(400, e.message);
       }
     }
+  }
+
+  public async addUser() {
+    const { ctx } = this;
+    const data = ctx.request.body;
+    try {
+      ctx.validate(addUserRule, data);
+      const user = await ctx.service.users.addUser(data);
+      ctx.success(user, 200);
+    } catch (e) {
+      if (e.errors) {
+        ctx.error(400, e.errors);
+      } else {
+        ctx.error(400, e.message);
+      }
+    }
+  }
+
+  public async destroy() {
+    const { ctx } = this;
+    const { id } = ctx.params;
+    try {
+      const res = await ctx.service.users.destroyUser(id);
+      ctx.success(res, 200);
+    } catch (e) {
+      if (e.errors) {
+        ctx.error(400, e.errors);
+      } else {
+        ctx.error(400, e.message);
+      }
+    }
+  }
+
+  public async update() {
+    const { ctx } = this;
+    const { id } = ctx.params;
+    const data = ctx.request.body;
+    try {
+      ctx.validate(editUserRule, data);
+      const res = await ctx.service.users.updateUser(id, data);
+      ctx.success(res, 200);
+    } catch (e) {
+      if (e.errors) {
+        ctx.error(400, e.errors);
+      } else {
+        ctx.error(400, e.message);
+      }
+    }
+  }
+
+  public async posts() {
+    const { ctx } = this;
+    const file = ctx.request.files[0];
+    const fileName = ctx.helper.encryptText(file.filename + Date.now()) + path.extname(file.filename);
+    let filePath = path.join('/public/upload', fileName);
+    const absFilePath = path.join(this.config.baseDir, 'app', filePath);
+
+    const readStream = fs.readFileSync(file.filepath);
+    fs.writeFileSync(absFilePath, readStream);
+    filePath = filePath.replace(/\\/g, '/');
+    ctx.success(filePath);
+  }
+
+  public async importUser() {
+    const { ctx } = this;
+    // 定义事务
+    const transaction = await ctx.model.transaction();
+    try {
+      const file = ctx.request.files[0];
+      const workSheets = xlsx.parse(fs.readFileSync(file.filepath));
+      const sheet1 = workSheets.length ? workSheets[0] : null;
+      const sheet1Data = sheet1 ? sheet1.data : [];
+      const users:any[] = [];
+      // 获取到所有的key
+      const cloumnTitles = sheet1Data[0];
+      // 生成users数据
+      for (let i = 1; i < sheet1Data.length; i++) {
+        // 获取到当前行的数据
+        const cloumnValues = sheet1Data[i];
+        const user = {};
+        for (let j = 0; j < cloumnTitles.length; j++) {
+          user[cloumnTitles[j]] = cloumnValues[j];
+        }
+        await ctx.service.users.createUser(user);
+        users.push(user);
+      }
+      await transaction.commit();
+      ctx.success(users);
+    } catch (e) {
+      await transaction.rollback();
+      ctx.error(500, e.message);
+    }
+  }
+
+  public async exportUser() {
+    const { ctx } = this;
+    const users = await ctx.service.users.findAll();
+    const user = users.length ? users[0].dataValues : null;
+    if (user) {
+      const keys = Object.keys(user);
+      const data: any[] = [];
+      data.push(keys);
+      users.forEach(item => {
+        const temp:any[] = [];
+        keys.forEach(key => {
+          temp.push(item[key]);
+        });
+        data.push(temp);
+      });
+      const buffer = xlsx.build([{ name: 'mySheetName', data }]);
+      ctx.set('Content-Type', 'application/vnd.ms-excel');
+      // ctx.set('Content-disposition', 'attachment; filename=foobar.pdf');
+      ctx.attachment('user.xls');
+      ctx.body = buffer;
+      return;
+    }
+    ctx.error(500, '导出失败');
   }
   // 创建用户
   public async createUser() {

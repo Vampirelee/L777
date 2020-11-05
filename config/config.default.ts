@@ -7,6 +7,8 @@ export default (appInfo: EggAppInfo) => {
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_LEEDAOHUAN.*?';
 
+  config.serverTimeout = 10000;
+
   config.cors = {
     origin: 'http://127.0.0.1:8080', // 设置单个域
     // origin: ctx => { // 设置多个域
@@ -35,6 +37,23 @@ export default (appInfo: EggAppInfo) => {
   config.middleware = [ 'auths' ];
   config.auths = {
     authUrls: [ '/users' ],
+  };
+
+  // 配置github鉴权
+  config.passportGithub = {
+    key: '2a8e9eae947bfe27803e',
+    secret: 'd335dbaf1822b8c54507186cc0b2cad8ce3b3a19',
+    // callbackURL: '/passport/github/callback',
+    // proxy: false,
+  };
+
+  config.multipart = {
+    mode: 'file',
+    fileSize: '10mb',
+    fileExtensions: [
+      '.xls',
+      '.apk',
+    ],
   };
 
   // add your special config in here

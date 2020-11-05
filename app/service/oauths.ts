@@ -21,6 +21,9 @@ export default class Oauths extends Service {
     } catch (e) {
       throw new Error('授权用户不存在');
     }
+  }
+  public async createOAuth(oauthObj) {
+    return await this.ctx.model.Oauths.create(oauthObj);
 
   }
 }

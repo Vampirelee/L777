@@ -1,8 +1,11 @@
 import imageCode from '../utils/imageCode';
 import emailCode from '../utils/emailCode';
 import phoneCode from '../utils/phoneCode';
-
+import Encrypto from '../utils/encrypt';
 module.exports = {
+  encryptText(text) {
+    return Encrypto.encryptText(this, text);
+  },
   createImageCode() {
     // this.ctx => context 对象
     return imageCode.createImageCode(this.ctx);
