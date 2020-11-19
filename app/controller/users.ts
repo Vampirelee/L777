@@ -14,7 +14,7 @@ const enum typeEnum {
   EmailUserRule = 'email',
   PhoneUserRule = 'phone'
 }
-export default class UsersController extends Controller {
+class UsersController extends Controller {
   public async index() {
     const { ctx } = this;
     try {
@@ -268,3 +268,5 @@ export default class UsersController extends Controller {
     return await ctx.service.users.getUser({ account, password });
   }
 }
+
+export default UsersController;

@@ -3,11 +3,13 @@
 
 import 'egg';
 import ExportOauths from '../../../app/model/oauths';
+import ExportRoles from '../../../app/model/roles';
 import ExportUser from '../../../app/model/user';
 
 declare module 'egg' {
   interface IModel {
     Oauths: ReturnType<typeof ExportOauths>;
+    Roles: ReturnType<typeof ExportRoles>;
     User: ReturnType<typeof ExportUser>;
   }
 }
