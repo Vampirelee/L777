@@ -1,8 +1,21 @@
 /**
  * @desc 用户表
  */
-import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table, CreatedAt, UpdatedAt, HasMany } from 'sequelize-typescript';
+import {
+  AutoIncrement,
+  Column,
+  DataType,
+  Model,
+  PrimaryKey,
+  Table,
+  CreatedAt,
+  UpdatedAt,
+  HasMany,
+  BelongsToMany,
+} from 'sequelize-typescript';
 import { Oauths } from './oauths';
+import { UserRoles } from './userRoles';
+import { Roles } from './roles';
 // 后端服务器静态资源地址
 const BASEURL = 'http://127.0.0.1:7001';
 
@@ -74,6 +87,9 @@ export class User extends Model<User> {
   baseUrl: string;
   @HasMany(() => Oauths)
   oauths: Oauths[];
+
+  @BelongsToMany(() => Roles, () => UserRoles)
+  roles: Roles[];
 
   @CreatedAt
   created_at: Date;

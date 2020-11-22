@@ -9,6 +9,7 @@ type AutoInstanceType<T, U = T extends CanExportFunc ? T : T extends AnyFunc ? R
 import ExportOauths from '../../../app/service/oauths';
 import ExportRoles from '../../../app/service/roles';
 import ExportTest from '../../../app/service/Test';
+import ExportUserRoles from '../../../app/service/userRoles';
 import ExportUsers from '../../../app/service/users';
 
 declare module 'egg' {
@@ -16,6 +17,7 @@ declare module 'egg' {
     oauths: AutoInstanceType<typeof ExportOauths>;
     roles: AutoInstanceType<typeof ExportRoles>;
     test: AutoInstanceType<typeof ExportTest>;
+    userRoles: AutoInstanceType<typeof ExportUserRoles>;
     users: AutoInstanceType<typeof ExportUsers>;
   }
 }

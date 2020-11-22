@@ -2,7 +2,19 @@
  * @desc 角色表
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table, CreatedAt, UpdatedAt } from 'sequelize-typescript';
+import {
+  AutoIncrement,
+  Column,
+  DataType,
+  Model,
+  PrimaryKey,
+  Table,
+  CreatedAt,
+  UpdatedAt,
+  BelongsToMany,
+} from 'sequelize-typescript';
+import { User } from './user';
+import { UserRoles } from './userRoles';
 
 
 @Table({
@@ -35,6 +47,9 @@ export class Roles extends Model<Roles> {
     comment: '角色描述',
   })
   role_desc: string;
+
+  @BelongsToMany(() => User, () => UserRoles)
+  user: User[];
 
   @CreatedAt
   created_at: Date;

@@ -34,15 +34,15 @@ export default () => {
   };
   // 发送邮件相关配置
   config.smtp = {
-    host: '',
+    host: 'smtp.qq.com',
     port: 465,
-    user: '', // generated ethereal user
-    pass: '', // generated ethereal password
+    user: 'lidaohuan@qq.com', // generated ethereal user
+    pass: 'afrrdzkvxcokcaef', // generated ethereal password
   };
   // 短信相关配置
   config.sms = {
-    accessKeyId: '',
-    accessKeySecret: '',
+    accessKeyId: 'LTAI4G7WyYo17jrPcSAL8Uzi',
+    accessKeySecret: 'j83juLybJt23lVShvUCdBCeAEVHHYI',
   };
   return config;
 };

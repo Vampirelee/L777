@@ -1,5 +1,6 @@
 import { Service } from 'egg';
 import encrypt from '../utils/encrypt';
+import { Roles } from '../model/roles';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { Op } = require('sequelize');
 
@@ -12,20 +13,20 @@ export default class User extends Service {
   // 查找是否存在用户
   public async getUser({ account, password }) {
     password = encrypt.encryptText(this.ctx.helper, password);
-    let isUser = false;
-    let res:any;
-    if (!isUser) {
-      res = await this.findUser({ username: account, password });
-      if (res) isUser = true;
-    }
-    if (!isUser) {
-      res = await this.findUser({ email: account, password });
-      if (res) isUser = true;
-    }
-    if (!isUser) {
-      res = await this.findUser({ phone: account, password });
-    }
     try {
+      let isUser = false;
+      let res:any;
+      if (!isUser) {
+        res = await this.findUser({ username: account, password });
+        if (res) isUser = true;
+      }
+      if (!isUser) {
+        res = await this.findUser({ email: account, password });
+        if (res) isUser = true;
+      }
+      if (!isUser) {
+        res = await this.findUser({ phone: account, password });
+      }
       return res.dataValues;
     } catch (e) {
       throw new Error('用户名或者密码不正确');
@@ -172,6 +173,7 @@ export default class User extends Service {
         attributes: {
           exclude: [ 'password', 'created_at', 'updated_at' ],
         },
+        include: [{ model: Roles }],
         limit: pageSize,
         offset: (currentPage - 1) * pageSize,
         where: { [Op.and]: conditionLists },
@@ -185,6 +187,7 @@ export default class User extends Service {
       attributes: {
         exclude: [ 'password', 'created_at', 'updated_at' ],
       },
+      include: [{ model: Roles }],
       limit: pageSize,
       offset: (currentPage - 1) * pageSize,
     });
