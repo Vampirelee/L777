@@ -4,6 +4,8 @@
 import 'egg';
 import ExportGithub from '../../../app/controller/github';
 import ExportHome from '../../../app/controller/home';
+import ExportRights from '../../../app/controller/rights';
+import ExportRoleRights from '../../../app/controller/roleRights';
 import ExportRoles from '../../../app/controller/roles';
 import ExportUserRoles from '../../../app/controller/userRoles';
 import ExportUsers from '../../../app/controller/users';
@@ -13,6 +15,8 @@ declare module 'egg' {
   interface IController {
     github: ExportGithub;
     home: ExportHome;
+    rights: ExportRights;
+    roleRights: ExportRoleRights;
     roles: ExportRoles;
     userRoles: ExportUserRoles;
     users: ExportUsers;

@@ -15,6 +15,8 @@ import {
 } from 'sequelize-typescript';
 import { User } from './user';
 import { UserRoles } from './userRoles';
+import { Rights } from './rights';
+import { RoleRights } from './roleRights';
 
 
 @Table({
@@ -50,6 +52,9 @@ export class Roles extends Model<Roles> {
 
   @BelongsToMany(() => User, () => UserRoles)
   user: User[];
+
+  @BelongsToMany(() => Rights, () => RoleRights)
+  rights: Rights[];
 
   @CreatedAt
   created_at: Date;

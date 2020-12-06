@@ -47,10 +47,13 @@ class UsersController extends Controller {
       // 判断用户是否可用
       if (!user.user_state) return ctx.error(400, '用户已注销');
       // 存储用户会话状态(服务端)
-      // ctx.session.user = data;
+      ctx.session.user = user;
       // jwt存储会话状态
-      delete user.password;
-      const token = jwt.sign(user, this.config.keys, { expiresIn: '2 days' });
+      const tokenObj:any = {};
+      tokenObj.username = user.username;
+      tokenObj.phone = user.phone;
+      tokenObj.email = user.email;
+      const token = jwt.sign(tokenObj, this.config.keys, { expiresIn: '2 days' });
       // data.token = token;
       ctx.cookies.set('token', token, {
         path: '/',
@@ -61,6 +64,7 @@ class UsersController extends Controller {
       ctx.success(user);
 
     } catch (e) {
+      console.log(e);
       if (e.errors) {
         ctx.error(400, e.errors);
       } else {

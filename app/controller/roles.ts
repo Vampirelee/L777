@@ -10,6 +10,15 @@ export default class UsersController extends Controller {
     try {
       if (JSON.stringify(ctx.query) !== '{}') {
         const res = await ctx.service.roles.getRoleList(ctx.query);
+        res.rolesLists.forEach((role:any) => {
+          role.dataValues.rightTree = role.dataValues.rights.filter((rightItem:any) => {
+            if (!rightItem.dataValues.children) rightItem.dataValues.children = [];
+            role.dataValues.rights.forEach((item:any) => {
+              if (rightItem.dataValues.id === item.dataValues.pid) rightItem.dataValues.children.push(item);
+            });
+            return rightItem.level === 0;
+          });
+        });
         ctx.success(res);
       } else {
         const res = await ctx.service.roles.getAllRoleList();

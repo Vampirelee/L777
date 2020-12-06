@@ -1,6 +1,7 @@
 import { Service } from 'egg';
 import encrypt from '../utils/encrypt';
 import { Roles } from '../model/roles';
+import { Rights } from '../model/rights';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { Op } = require('sequelize');
 
@@ -27,8 +28,9 @@ export default class User extends Service {
       if (!isUser) {
         res = await this.findUser({ phone: account, password });
       }
-      return res.dataValues;
+      return res;
     } catch (e) {
+      console.log(e);
       throw new Error('用户名或者密码不正确');
     }
   }
@@ -127,7 +129,33 @@ export default class User extends Service {
 
   public async findUser(options) {
     const { ctx } = this;
-    const res = await ctx.model.User.findOne({ where: options });
+    const res = await ctx.model.User.findOne({ where: options, include: [{ model: Roles, include: [{ model: Rights }] }] });
+    if (res) {
+      const allRights:any[] = [];
+      res.roles.forEach((roles:any) => {
+        roles.rights.forEach((rights:any) => {
+          allRights.push(rights);
+        });
+      });
+      const obj:any = {};
+      const uniqueRights:any[] = allRights.reduce((acc:any, rights:any) => {
+        if (!obj[rights.id]) {
+          obj[rights.id] = true;
+          acc.push(rights);
+        }
+        return acc;
+      }, []);
+      const rightsTree:any[] = uniqueRights.filter((rightsItem:any) => {
+        uniqueRights.forEach((rights:any) => {
+          if (rights.pid === rightsItem.id) {
+            if (!rightsItem.dataValues.children) rightsItem.dataValues.children = [];
+            rightsItem.dataValues.children.push(rights);
+          }
+        });
+        return rightsItem.level === 0;
+      });
+      (res.dataValues as any).rightsTree = rightsTree;
+    }
     return res;
   }
 
@@ -137,6 +165,7 @@ export default class User extends Service {
       attributes: {
         exclude: [ 'password', 'created_at', 'updated_at' ],
       },
+      include: [{ model: Roles, include: [{ model: Rights }] }],
     });
     return res;
   }

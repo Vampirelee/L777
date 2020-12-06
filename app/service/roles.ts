@@ -1,5 +1,6 @@
 import { Service } from 'egg';
 const { Op } = require('sequelize');
+import { Rights } from '../model/rights';
 /**
  * Test Service
  */
@@ -14,6 +15,7 @@ export default class Roles extends Service {
       attributes: {
         exclude: [ 'created_at', 'updated_at' ],
       },
+      include: [{ model: Rights }],
       where: {
         [Op.or]: [
           { role_name: { [Op.substring]: key } },
@@ -33,7 +35,9 @@ export default class Roles extends Service {
   }
   public async getAllRoleList() {
     const { ctx } = this;
-    const rolesLists = await ctx.model.Roles.findAll();
+    const rolesLists = await ctx.model.Roles.findAll({
+      include: [{ model: Rights }],
+    });
     const totalCount = await ctx.model.Roles.findAndCountAll();
     return { rolesLists, totalCount: totalCount.count };
   }
